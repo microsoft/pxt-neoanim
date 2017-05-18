@@ -8,7 +8,7 @@ namespace light {
         return animation;
     }
 
-    const AnimationSheetMagicNumber = 0x2e0a21;
+    const AnimationSheetMagicNumber = 0x2e0a2188;
 
     class BufferAnimation extends NeoPixelAnimation {
         private bitmap: Buffer;
@@ -30,22 +30,22 @@ namespace light {
             }
 
             // check magic number
-            if (this.bitmap.getNumber(NumberFormat.UInt32LE, 0) != AnimationSheetMagicNumber)
-                return;
+            //            if (this.bitmap.getNumber(NumberFormat.UInt32LE, 0) != AnimationSheetMagicNumber)
+            //              return;
 
             // npalette
             const npalette = this.bitmap[4];
             // extract palette and frames
-            const palette = this.bitmap.slice(6, npalette * 3);
-            const frames = this.bitmap.slice(6 + palette.length);
+            const opalette = 6;
+            const oframes = opalette + npalette * 3;
 
-            const n = strip.length();            
+            const n = strip.length();
             // the image is written row by row
-            let offset = this.step * n;
-            if (offset + n > frames.length) {
+            let offset = oframes + this.step * n;
+            if (offset + n > this.bitmap.length) {
                 // last frame is missing images, reset step
                 this.step = 0;
-                offset = 0;
+                offset = oframes;
             }
 
             const bf = strip.buffered();
@@ -53,9 +53,14 @@ namespace light {
             // scan colors starting at offset, lookup color and set in neopixel     
             for (let i = 0; i < n; i++) {
                 const k = i + offset;
-                const ci = frames[k];
-                const c = rgb(palette[ci], palette[ci + 1], palette[ci + 2]);
-                strip.setPixelColor(i, c);
+                const ci = this.bitmap[k];
+                if (ci < ncolors) {
+                    const c = rgb(
+                        this.bitmap[opalette + ci * 3],
+                        this.bitmap[opalette + ci * 3 + 1],
+                        this.bitmap[opalette + ci * 3 + 2]);
+                    strip.setPixelColor(i, c);
+                }
             }
             strip.show();
             strip.setBuffered(bf);
@@ -64,7 +69,7 @@ namespace light {
             loops.pause(this.interval);
 
             // increment step
-            this.step = this.step % n;
+            this.step = (this.step + 1) % n;
         }
     }
 }

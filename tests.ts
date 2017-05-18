@@ -1,27 +1,32 @@
+
 const strip = light.pixels;
 const nleds = strip.length();
 const ncolors = 3;
-const nframes = 10;
+const nframes = 2;
 const sheet = pins.createBuffer(6 + ncolors * 3 + nleds * nframes);
-const palette = sheet.slice(6, ncolors * 3);
-const frames = sheet.slice(6 + palette.length);
+const opalette = 6;
+const oframes = opalette + ncolors * 3;
 
 // magic number
-sheet.setNumber(0, NumberFormat.UInt32LE, 0x2e0a21);
+//sheet.setNumber(0, NumberFormat.UInt32BE, 0x2e0a2188);
 // palette
 sheet[4] = ncolors;
-palette[0] = 0xff; // red
-palette[4] = 0xff; // green
-palette[8] = 0xff; // blue
+sheet[opalette + 0] = 0xff; // red
+sheet[opalette + 4] = 0xff; // green
+sheet[opalette + 8] = 0xff; // blue
 // filing up colors
 let k = 0;
 for (let i = 0; i < nleds; ++i) {
     for (let j = 0; j < nframes; ++j) {
-        frames[k++] = i + j % ncolors;
+        sheet[oframes + k] = k % ncolors;
+        k++;
     }
 }
+for (let k = 0; k < sheet.length; ++k)
+    serial.writeLine("sheet[" + k + "] = " + sheet[k])
 let anim = light.animationSheet(sheet, 50);
 
-loops.forever(() => {
-    strip.showAnimation(anim, 10000);
+strip.showAnimationFrame(anim);
+input.buttonA.onEvent(ButtonEvent.Down, () => {
+    strip.showAnimationFrame(anim);
 })

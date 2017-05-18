@@ -19,7 +19,7 @@ light.animationSheet(null, 50)
 
 The bitmap format should be specified as follows. All values are little endian.
 
-* magic number ``0x2e0a21``, 4 bytes
+* magic number ``0x2e0a2188``, 4 bytes
 * palette size, 1 byte (``npalette``)
 * reserved padding, 1 byte
 * palette, ``npalette`` x 24bit RGB colors
