@@ -1,0 +1,17 @@
+{
+    "name": "neoanim",
+    "version": "0.0.0",
+    "description": "A neopixel animation based on bitmaps",
+    "license": "MIT",
+    "dependencies": {
+        "circuit-playground": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts"
+    ],
+    "testFiles": [
+        "tests.ts"
+    ],
+    "public": false
+}
