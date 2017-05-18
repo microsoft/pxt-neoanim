@@ -22,8 +22,6 @@ for (let i = 0; i < nleds; ++i) {
         k++;
     }
 }
-for (let k = 0; k < sheet.length; ++k)
-    serial.writeLine("sheet[" + k + "] = " + sheet[k])
 let anim = light.animationSheet(sheet, 50);
 
 strip.showAnimationFrame(anim);
