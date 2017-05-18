@@ -4,7 +4,8 @@
     "description": "A neopixel animation based on bitmaps",
     "license": "MIT",
     "dependencies": {
-        "circuit-playground": "*"
+        "core": "*",
+        "light": "*"
     },
     "files": [
         "README.md",
