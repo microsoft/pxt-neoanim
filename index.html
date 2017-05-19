@@ -1,7 +1,155 @@
 <html>
+
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css" integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M="
+        crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.js" integrity="sha256-97Q90i72uoJfYtVnO2lQcLjbjBySZjLHx50DYhCBuJo="
+        crossorigin="anonymous"></script>
 </head>
+<style>
+
+</style>
+
 <body>
-    loading...
+    <div class="pusher">
+        <div class="ui vertical stripe segment">
+            <div class="ui container">
+                <h1>NeoPixel Animation for Microsoft MakeCode</h1>
+            </div>
+        </div>
+        <div class="ui vertical stripe segment">
+            <div class="ui container">
+                <div class="ui info message">
+                    Copy and paste your animation image in this page. Make sure it is 10 pixel high and uses less than 256 color tones.
+                </div>
+                <div id="preview">
+                </div>
+            </div>
+        </div>
+        <div id="outputext" class="ui vertical stripe segment" style="display:none;">
+            <div class="ui container">
+                <p>
+                    Copy the copy below to the JavaScript editor in MakeCode.
+                </p>
+                <div class="ui small fluid icon input">
+                    <pre id="output"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectOutput() {
+            var range = document.createRange();
+            range.selectNodeContents(output);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function importBitmap(f) {
+            outputext.style.display = 'none;'
+            preview.innerText = 'loading file...';
+
+            var reader = new FileReader();
+            reader.onerror = function () {
+                preview.innerText = 'ooops, could not read file';
+            }
+            reader.onload = function (ev) {
+                preview.innerText = 'loading image...';
+
+                var img = document.createElement('img'); // HTMLImageElement
+                img.onerror = function () {
+                    preview.innerText = "oops, can't load that PNG file"
+                }
+                img.onload = function () {
+                    var w = img.width;
+                    var h = img.height;
+
+                    var cvs = document.createElement('canvas');
+                    var ctx = cvs.getContext("2d");
+                    ctx.drawImage(img, 0, 0, w, h, 0, 0, w, h);
+                    var imgData = ctx.getImageData(0, 0, w, h)
+                    console.debug(`data: ${imgData.data.length} bytes`)
+
+                    // quantize palette
+                    var data = imgData.data;
+                    var quant = {}; // TODO: use proper algo here
+                    for (var i = 0; i < data.length; ++i) {
+                        quant[data[i]] = (quant[data[i]] || 0) + 1;
+                    }
+                    var palette = Object.keys(quant);
+                    console.debug(palette);
+                    if (palette.length > 0xff) {
+                        preview.innerText = 'too many colors... save your png to a 8bit palette';
+                        return;
+                    }
+                    // reverse lookup
+                    for (var i = 0; i < palette.length; ++i)
+                        quant[palette[i]] = i;
+
+                    // start building buffer
+                    var out = [0x2e, 0x0a, 0x21, 0x88, 0, 0];
+                    // magic number 0..3
+                    // palette
+                    out[4] = palette.length;
+                    var k = 6;
+                    for (var i = 0; i < palette.length; ++i) {
+                        out[k++] = (palette[i] >> 16) & 0xff;
+                        out[k++] = (palette[i] >> 8) & 0xff;
+                        out[k++] = (palette[i]) & 0xff;
+                    }
+                    // indexed colors
+                    for (var c = 0; c < w; ++c) {
+                        for (var r = 0; r < h; ++r) {
+                            var pix = data[r * w + c];
+                            out[k++] = quant[pix];
+                        }
+                    }
+
+                    // generate TS
+                    var ts =
+                        `const animationData = hex\`${out.map(function (c, i) { return (c & 0xff).toString(16).toUpperCase() + (i % 80 == 79 ? '\n' : ''); }).join('')}\`;
+const animation = light.animationSheet(animationData, 50);
+`
+
+                    output.innerText = ts;
+                    outputext.style.display = 'block';
+                    preview.innerText = 'success!';
+
+                    selectOutput();
+                }
+                img.src = reader.result;
+            }
+            reader.readAsDataURL(f);
+        }
+
+        document.onreadystatechange = function (er) {
+            if (document.readyState != "complete") return;
+            document.body.addEventListener('paste', function (e) {
+                if (e.clipboardData) {
+                    // has file?
+                    let files = e.clipboardData.files
+                    if (files && files.length > 0) {
+                        e.stopPropagation(); // Stops some browsers from redirecting.
+                        e.preventDefault();
+                        importBitmap(files[0]);
+                    }
+                    // has item?
+                    else if (e.clipboardData.items && e.clipboardData.items.length > 0) {
+                        let f = e.clipboardData.items[0].getAsFile()
+                        if (f) {
+                            e.stopPropagation(); // Stops some browsers from redirecting.
+                            e.preventDefault();
+                            importBitmap(f)
+                        }
+                    }
+                }
+            })
+
+            output.onclick = function () { selectOutput(); }
+        }
+    </script>
 </body>
+
 </html>

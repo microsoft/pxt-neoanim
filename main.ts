@@ -30,8 +30,11 @@ namespace light {
             }
 
             // check magic number
-            //            if (this.bitmap.getNumber(NumberFormat.UInt32LE, 0) != AnimationSheetMagicNumber)
-            //              return;
+            if (this.bitmap[0] != 0x2e ||
+                this.bitmap[1] != 0x0a ||
+                this.bitmap[2] != 0x21 ||
+                this.bitmap[3] != 0x88)
+                return;
 
             // npalette
             const npalette = this.bitmap[4];

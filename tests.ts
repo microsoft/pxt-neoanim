@@ -10,6 +10,10 @@ const oframes = opalette + ncolors * 3;
 // magic number
 //sheet.setNumber(0, NumberFormat.UInt32BE, 0x2e0a2188);
 // palette
+sheet[0] = 0x2e;
+sheet[1] = 0x0a;
+sheet[2] = 0x21;
+sheet[3] = 0x88;
 sheet[4] = ncolors;
 sheet[opalette + 0] = 0xff; // red
 sheet[opalette + 4] = 0xff; // green
