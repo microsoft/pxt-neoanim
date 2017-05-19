@@ -3,8 +3,6 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css" integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M="
         crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.js" integrity="sha256-97Q90i72uoJfYtVnO2lQcLjbjBySZjLHx50DYhCBuJo="
-        crossorigin="anonymous"></script>
 </head>
 <style>
 
@@ -15,6 +13,11 @@
         <div class="ui vertical stripe segment">
             <div class="ui container">
                 <h1>NeoPixel Animation for Microsoft MakeCode</h1>
+                <p>
+                    <a href="https://learn.adafruit.com/circuit-playground-neoanim-using-bitmaps-to-animate-neopixels/from-pixels-to-neopixels">
+                neopixel animations using <a href="https://makecode.adafruit.com">Microsoft MakeCode</a>.
+                </a>!
+                </p>
             </div>
         </div>
         <div class="ui vertical stripe segment">
@@ -115,7 +118,7 @@ const animation = light.animationSheet(animationData, 50);
 
                     output.innerText = ts;
                     outputext.style.display = 'block';
-                    preview.innerText = 'success!';
+                    preview.innerText = '';
 
                     selectOutput();
                 }
