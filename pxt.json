@@ -12,7 +12,7 @@
         "main.ts"
     ],
     "testFiles": [
-        "tests.ts"
+        "test.ts"
     ],
     "public": false
 }

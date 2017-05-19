@@ -57,7 +57,7 @@ namespace light {
             for (let i = 0; i < n; i++) {
                 const k = i + offset;
                 const ci = this.bitmap[k];
-                if (ci < ncolors) {
+                if (ci < npalette) {
                     const c = rgb(
                         this.bitmap[opalette + ci * 3],
                         this.bitmap[opalette + ci * 3 + 1],
