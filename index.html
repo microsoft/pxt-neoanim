@@ -78,8 +78,9 @@
                     // quantize palette
                     var data = imgData.data;
                     var quant = {}; // TODO: use proper algo here
-                    for (var i = 0; i < data.length; ++i) {
-                        quant[data[i]] = (quant[data[i]] || 0) + 1;
+                    for (var i = 0; i < data.length; i += 4) {
+                        var c = (data[i] << 16) | (data[i+1] << 8) | data[i+2]; // ignore alpha
+                        quant[c] = (quant[c] || 0) + 1;
                     }
                     var palette = Object.keys(quant);
                     console.log(`palette: ${palette.length}`)
@@ -104,10 +105,11 @@
                         out[k++] = (palette[i]) & 0xff;
                     }
                     // indexed colors
-                    for (var c = 0; c < w; ++c) {
-                        for (var r = 0; r < h; ++r) {
-                            var pix = data[r * w + c];
-                            out[k++] = quant[pix];
+                    for (var col = 0; col < w; ++col) {
+                        for (var row = 0; row < h; ++row) {
+                            var pix = (row * w + col) * 4;
+                            var c = (data[pix] << 16) | (data[pix+1] << 8) | data[pix+2]; // ignore alpha
+                            out[k++] = quant[c];
                         }
                     }
 
@@ -115,7 +117,7 @@
 
                     // generate TS
                     var ts =
-                        `const animationData = hex\`${out.map(function (c, i) { return  ('0' + (c & 0xFF).toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`;
+                        `const animationData = hex\`${out.map(function (c, i) { return  ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`;
 const animation = light.animationSheet(animationData, 50);
 `
 

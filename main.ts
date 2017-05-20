@@ -33,8 +33,9 @@ namespace light {
             if (this.bitmap[0] != 0x2e ||
                 this.bitmap[1] != 0x0a ||
                 this.bitmap[2] != 0x21 ||
-                this.bitmap[3] != 0x88)
+                this.bitmap[3] != 0x88) {
                 return;
+            }
 
             // npalette
             const npalette = this.bitmap[4];
@@ -68,11 +69,11 @@ namespace light {
             strip.show();
             strip.setBuffered(bf);
 
+            // increment step
+            this.step++;
+
             // sleep
             loops.pause(this.interval);
-
-            // increment step
-            this.step = (this.step + 1) % n;
         }
     }
 }
