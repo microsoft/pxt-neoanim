@@ -21,8 +21,8 @@
         <div class="ui vertical stripe segment">
             <div class="ui container">
                 <div class="ui info message">
-                    <strong>Copy and paste your animation image in this page.</strong> Make sure it is 10 pixel high and
-                    uses less than 256 color tones.
+                    <strong>Drag/Drop or Copy/paste your animation image in this page.</strong> Make sure it is 10 pixel
+                    high and uses less than 256 color tones.
                 </div>
                 <div id="preview">
                 </div>
@@ -31,7 +31,9 @@
         <div id="outputext" class="ui vertical stripe segment" style="display:none;">
             <div class="ui container">
                 <p>
-                    Copy the copy below to the JavaScript editor in MakeCode.
+                    Go to <a href="https://makecode.adafruit.com">makecode.adafruit.com</a>,
+                    add the <code>pxt-neoanim</code> package, 
+                    copy the code below to the JavaScript editor in MakeCode. Enjoy!
                 </p>
                 <div class="ui small fluid icon input">
                     <pre id="output"></pre>
@@ -52,7 +54,6 @@
         function color(data, i) {
             var c = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2]; // ignore alpha
             var alpha = data[i + 3];
-            console.log(`alpha ${i} = ${alpha}`)
             if (!alpha || c == 0xffffff) c = 0;
             return c;
         }
@@ -75,14 +76,12 @@
                 img.onload = function () {
                     var w = img.width;
                     var h = img.height;
-                    console.log(`w: ${w}, h: ${h}`)
 
                     var cvs = document.createElement('canvas');
                     var ctx = cvs.getContext("2d");
                     ctx.clearRect(0, 0, w, h)
                     ctx.drawImage(img, 0, 0, w, h, 0, 0, w, h);
                     var imgData = ctx.getImageData(0, 0, w, h)
-                    console.log(`data: ${imgData.data.length} bytes`)
 
                     // quantize palette
                     var data = imgData.data;
@@ -92,8 +91,6 @@
                         quant[c] = (quant[c] || 0) + 1;
                     }
                     var palette = Object.keys(quant);
-                    console.log(`palette: ${palette.length}`)
-                    console.debug(palette);
                     if (palette.length > 0xff) {
                         preview.innerText = 'too many colors... save your png to a 8bit palette';
                         return;
@@ -121,8 +118,6 @@
                             out[k++] = quant[c];
                         }
                     }
-
-                    console.log(`buffer: ${out.length}`);
 
                     // generate TS
                     var ts =
@@ -165,6 +160,31 @@ loops.forever(() => {
                     }
                 }
             })
+            document.body.addEventListener('dragover', function (e) {
+                let types = e.dataTransfer.types;
+                let found = false;
+                for (let i = 0; i < types.length; ++i)
+                    if (types[i] == "Files")
+                        found = true;
+                if (found) {
+                    if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
+                    e.dataTransfer.dropEffect = 'copy';  // See the section on the DataTransfer object.
+                    return false;
+                }
+                return true;
+            }, false);
+            document.body.addEventListener('drop', function (e) {
+                var files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    e.stopPropagation(); // Stops some browsers from redirecting.
+                    e.preventDefault();
+                    importBitmap(files[0]);
+                }
+                return false;
+            }, false);
+            document.body.addEventListener('dragend', function (e) {
+                return false;
+            }, false);
 
             output.onclick = function () { selectOutput(); }
         }
