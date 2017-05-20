@@ -14,15 +14,15 @@
             <div class="ui container">
                 <h1>NeoPixel Animation for Microsoft MakeCode</h1>
                 <p>
-                    <a href="https://learn.adafruit.com/circuit-playground-neoanim-using-bitmaps-to-animate-neopixels/from-pixels-to-neopixels">Paint your NeoPixel animations</a> and convert them
-                    to <a href="https://makecode.adafruit.com">Microsoft MakeCode</a>.
+                    <a href="https://learn.adafruit.com/circuit-playground-neoanim-using-bitmaps-to-animate-neopixels/from-pixels-to-neopixels">Paint your NeoPixel animations</a>                    and convert them to <a href="https://makecode.adafruit.com">Microsoft MakeCode</a>.
                 </p>
             </div>
         </div>
         <div class="ui vertical stripe segment">
             <div class="ui container">
                 <div class="ui info message">
-                    <strong>Copy and paste your animation image in this page.</strong> Make sure it is 10 pixel high and uses less than 256 color tones.
+                    <strong>Copy and paste your animation image in this page.</strong> Make sure it is 10 pixel high and
+                    uses less than 256 color tones.
                 </div>
                 <div id="preview">
                 </div>
@@ -49,6 +49,14 @@
             sel.addRange(range);
         }
 
+        function color(data, i) {
+            var c = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2]; // ignore alpha
+            var alpha = data[i + 3];
+            console.log(`alpha ${i} = ${alpha}`)
+            if (!alpha || c == 0xffffff) c = 0;
+            return c;
+        }
+
         function importBitmap(f) {
             outputext.style.display = 'none;'
             preview.innerText = 'loading file...';
@@ -71,6 +79,7 @@
 
                     var cvs = document.createElement('canvas');
                     var ctx = cvs.getContext("2d");
+                    ctx.clearRect(0, 0, w, h)
                     ctx.drawImage(img, 0, 0, w, h, 0, 0, w, h);
                     var imgData = ctx.getImageData(0, 0, w, h)
                     console.log(`data: ${imgData.data.length} bytes`)
@@ -79,7 +88,7 @@
                     var data = imgData.data;
                     var quant = {}; // TODO: use proper algo here
                     for (var i = 0; i < data.length; i += 4) {
-                        var c = (data[i] << 16) | (data[i+1] << 8) | data[i+2]; // ignore alpha
+                        var c = color(data, i);
                         quant[c] = (quant[c] || 0) + 1;
                     }
                     var palette = Object.keys(quant);
@@ -108,7 +117,7 @@
                     for (var col = 0; col < w; ++col) {
                         for (var row = 0; row < h; ++row) {
                             var pix = (row * w + col) * 4;
-                            var c = (data[pix] << 16) | (data[pix+1] << 8) | data[pix+2]; // ignore alpha
+                            var c = color(data, pix);
                             out[k++] = quant[c];
                         }
                     }
@@ -117,7 +126,7 @@
 
                     // generate TS
                     var ts =
-`const animation = light.animationSheet(hex \`${out.map(function (c, i) { return  ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`, 50);
+                        `const animation = light.animationSheet(hex \`${out.map(function (c, i) { return ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`, 50);
 loops.forever(() => {
     light.pixels.showAnimationFrame(animation);
 })
