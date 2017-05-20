@@ -15,6 +15,10 @@ light.animationSheet(null, 50)
 * ``buffer``, the buffer containing the data (more below)
 * ``interval``, the time in milliseconds between each frame
 
+## Animation editor
+
+Go to https://microsoft.github.io/pxt-neoanim/ and copy or drag your animation into the page.
+
 ## Buffer format
 
 The bitmap format should be specified as follows. All values are little endian.
@@ -67,5 +71,5 @@ MIT
 
 ## Supported targets
 
-* for PXT/ adafruit
+* for PXT/adafruit
 (The metadata above is needed for package search.)
