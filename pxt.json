@@ -1,6 +1,6 @@
 {
     "name": "neoanim",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A neopixel animation based on bitmaps",
     "license": "MIT",
     "dependencies": {
@@ -15,5 +15,8 @@
         "test.ts"
     ],
     "public": true,
-    "extension": {}
+    "extension": {
+        "namespace": "light",
+        "label": "Animation Editor"
+    }
 }
