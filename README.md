@@ -17,7 +17,10 @@ light.animationSheet(null, 50)
 
 ## Animation editor
 
-Go to https://microsoft.github.io/pxt-neoanim/ and copy or drag your animation into the page.
+From the https://makecode.adafruit.com editor, 
+* click on **Add Package**
+* add **neo-anim**
+* go to the **Lights** category and click on **Animation Editor**
 
 ## Buffer format
 
