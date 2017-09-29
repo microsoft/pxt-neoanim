@@ -174,7 +174,7 @@
     * An animation created with neo-anim
     */
     //% block
-    export function ${fileName}() {
+    export function ${fileName}Animation() {
         const animation = light.animationSheet(hex \`${out.map(function (c, i) { return ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`, 50);
         light.pixels.showAnimationFrame(animation);
     }
