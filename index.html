@@ -54,16 +54,8 @@
                         case "extinit":
                             hosted = true;
                             console.log('host connection completed')
-                            // read back the code
-                            sendRequest("extreadcode");
                             break;
-                        case "extreadcode":
-                            var dataUri = msg.resp && msg.resp.json ? JSON.parse(msg.resp.json) : undefined;
-                            if (dataUri) {
-                                console.log('importing previous data')
-                                importImage(dataUri);
-                            }
-                            break;
+
                     }
                     delete idToType[msg.id];
                 }

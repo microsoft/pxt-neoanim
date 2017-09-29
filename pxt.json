@@ -15,5 +15,8 @@
         "test.ts"
     ],
     "public": true,
-    "extension": {}
+    "extension": {
+        "namespace": "light",
+        "label": "Animation Editor"
+    }
 }
