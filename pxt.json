@@ -1,6 +1,6 @@
 {
     "name": "neoanim",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "A neopixel animation based on bitmaps",
     "license": "MIT",
     "dependencies": {
