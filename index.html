@@ -76,8 +76,17 @@
                     id: id
                 }
             }
-    
+
+            function isIFrame() {
+                try {
+                    return window && window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            }
+            
             function sendRequest(action, body) {
+                if (!isIFrame()) return;
                 var msg = mkRequest(action);
                 msg.body = body;
                 window.parent.postMessage(msg, "*");
