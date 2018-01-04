@@ -7,19 +7,18 @@ A neopixel animation based on bitmaps [![Build Status](https://travis-ci.org/Mic
 Creates an animation from a pre-rendered set of frames
 
 ```sig
-light.animationSheet(null, 50)
+light.animationSheet(null)
 ```
 
 ## Parameters
 
 * ``buffer``, the buffer containing the data (more below)
-* ``interval``, the time in milliseconds between each frame
 
 ## Animation editor
 
 From the https://makecode.adafruit.com editor, 
 * click on **Add Package**
-* add **neo-anim**
+* add **neoanim**
 * go to the **Lights** category and click on **Animation Editor**
 
 ## Buffer format
