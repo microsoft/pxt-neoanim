@@ -17,6 +17,7 @@
     "public": true,
     "extension": {
         "namespace": "light",
-        "label": "Animation Editor"
+        "label": "Animation Editor",
+        "localUrl": "http://127.0.0.1:8080/index.html?asdfsadf"
     }
 }

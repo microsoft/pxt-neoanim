@@ -21,8 +21,7 @@
         <div class="ui vertical stripe segment">
             <div class="ui container">
                 <div class="ui info message">
-                    <strong>Drag/Drop or Copy/paste your animation image in this page.</strong> Make sure it is 10 pixel high and
-                    uses less than 256 color tones.
+                    <strong>Drag/Drop or Copy/paste your animation image in this page.</strong> Make sure it uses less than 256 color tones.
                 </div>
                 <div id="preview">
                 </div>
@@ -113,9 +112,9 @@ namespace light {
                 ts +=
                     `
     /*
-    * Creates an animation created with neo-anim
+    * An awesome animation
     */
-    //% blockId="neoanim_${fileName}" block="${fileName} animation"
+    //% fixedInstance block="${fileName} chase" blockIdentity="light._animationPicker"    
     export const ${fileName}Animation = light.animationSheet(hex \`${usercode[fileName]}\`);
 
     `
