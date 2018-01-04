@@ -4,6 +4,14 @@ namespace light {
      */
     //% help=reference/light/animation-sheet
     export function animationSheet(buffer: Buffer): NeoPixelAnimation {
+        if (!buffer) return undefined;
+        // check magic number
+        if (buffer[0] != 0x2e ||
+            buffer[1] != 0x0a ||
+            buffer[2] != 0x21 ||
+            buffer[3] != 0x88)
+            return undefined;
+
         const animation = new BufferAnimation(buffer);
         return animation;
     }
@@ -26,14 +34,6 @@ namespace light {
                 if (start < 0) {
                     step = 0;
                     start = control.millis();
-                }
-
-                // check magic number
-                if (this.bitmap[0] != 0x2e ||
-                    this.bitmap[1] != 0x0a ||
-                    this.bitmap[2] != 0x21 ||
-                    this.bitmap[3] != 0x88) {
-                    return;
                 }
 
                 // npalette

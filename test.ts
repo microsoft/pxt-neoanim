@@ -1,5 +1,5 @@
 
-const strip = light.pixels;
+const strip = light.createStrip();
 const nleds = strip.length();
 const ncolors = 3;
 const nframes = 2;
@@ -26,12 +26,8 @@ for (let i = 0; i < nleds; ++i) {
         k++;
     }
 }
-let anim = light.animationSheet(sheet, 50);
-
+const anim = light.animationSheet(sheet);
 strip.showAnimationFrame(anim);
-input.buttonA.onEvent(ButtonEvent.Down, () => {
-    strip.showAnimationFrame(anim);
-})
 
 const animationData = hex`2EA2188AE0001D001F00200021002400250028002A002C002F003000320033003400350036003700380039003A003B003D003E004000
 430044004600470048004A004B004C004D004E004F00500051005200540055005600580059005C005D005E005F00600061006200640
@@ -48,8 +44,5 @@ ADADADADADADADADACACACACACACACA2ACACACACACACACACACA3ACACADADADADADADADADADADADAD
 ADADADADADADADADACACACACACACACACACACACACACACACACACACACACADADADADADADADADADADADADADADADADADADADADACACACACABACACAC8EA8ACACACACABACACAC91A8ADADADADADADADADADADADAD
 ADADADADADADADADA1ACACAC699EACAC2653A2ACACAC709FACAC325BADADADADADADADADADADADADADADADADADADADAD499FACAC1246ACACB952A0ACAC1F4FACAC1A18ADADADADADADADADADADADAD
 ADADADADADADADAD`;
-const animation = light.animationSheet(animationData, 50);
-input.buttonB.onEvent(ButtonEvent.Down, () => {
-    strip.showAnimationFrame(animation);
-});
-
+const animation = light.animationSheet(animationData);
+strip.showAnimationFrame(animation)

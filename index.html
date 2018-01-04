@@ -1,228 +1,231 @@
 <html>
-    
-    <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css" integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M="
-            crossorigin="anonymous" />
-    </head>
-    <style>
-    
-    </style>
-    
-    <body>
-        <div class="pusher">
-            <div class="ui vertical stripe segment">
-                <div class="ui container">
-                    <h1>NeoPixel Animation for Microsoft MakeCode</h1>
-                    <p>
-                        <a href="https://learn.adafruit.com/circuit-playground-neoanim-using-bitmaps-to-animate-neopixels/from-pixels-to-neopixels">Paint your NeoPixel animations</a>                    and convert them to <a href="https://makecode.adafruit.com">Microsoft MakeCode</a>.
-                    </p>
-                </div>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css" integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M="
+        crossorigin="anonymous" />
+</head>
+<style>
+</style>
+
+<body>
+    <div class="pusher">
+        <div class="ui vertical stripe segment">
+            <div class="ui container">
+                <h1>NeoPixel Animation for Microsoft MakeCode</h1>
+                <p>
+                    <a href="https://learn.adafruit.com/circuit-playground-neoanim-using-bitmaps-to-animate-neopixels/from-pixels-to-neopixels">Paint your NeoPixel animations</a> and convert them to
+                    <a href="https://makecode.adafruit.com">Microsoft MakeCode</a>.
+                </p>
             </div>
-            <div class="ui vertical stripe segment">
-                <div class="ui container">
-                    <div class="ui info message">
-                        <strong>Drag/Drop or Copy/paste your animation image in this page.</strong> Make sure it is 10 pixel
-                        high and uses less than 256 color tones.
-                    </div>
-                    <div id="preview">
-                    </div>
+        </div>
+        <div class="ui vertical stripe segment">
+            <div class="ui container">
+                <div class="ui info message">
+                    <strong>Drag/Drop or Copy/paste your animation image in this page.</strong> Make sure it uses less than 256 color tones.
                 </div>
-            </div>
-            <div id="outputext" class="ui vertical stripe segment" style="display:none;">
-                <div class="ui container">
-                    <p>
-                        Go to <a href="https://makecode.adafruit.com">makecode.adafruit.com</a>, add the <code>pxt-neoanim</code>                    package, copy the code below to the JavaScript editor in MakeCode. Enjoy!
-                    </p>
-                    <div class="ui small fluid icon input">
-                        <pre id="output"></pre>
-                    </div>
+                <div id="preview">
                 </div>
             </div>
         </div>
-    
-        <script>
-            var extId = window.location.hash.substr(1);
-            var hosted = false;
-            var idToType = {};
-            var usercode = {};
-    
-            function receiveMessage(ev) {
-                var msg = ev.data;
-                var action = idToType[msg.id];
-                if (action) {
-                    console.debug('neoanim received ' + action);
-                    switch (action) {
-                        case "extinit":
-                            hosted = true;
-                            console.log('host connection completed')
-                            sendRequest("extreadusercode");
-                            break;
-                        case "extreadusercode":
-                            usercode = msg.resp || {};
-                            break;
-                    }
-                    delete idToType[msg.id];
-                }
-            }
-    
-            function mkRequest(action) {
-                var id = Math.random().toString();
-                idToType[id] = action;
-                return {
-                    type: "pxtpkgext",
-                    action: action,
-                    extId: extId,
-                    response: true,
-                    id: id
-                }
-            }
+        <div id="outputext" class="ui vertical stripe segment" style="display:none;">
+            <div class="ui container">
+                <div class="ui small fluid icon input">
+                    <pre id="output"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            function isIFrame() {
-                try {
-                    return window && window.self !== window.top;
-                } catch (e) {
-                    return true;
-                }
-            }
-            
-            function sendRequest(action, body) {
-                if (!isIFrame()) return;
-                var msg = mkRequest(action);
-                msg.body = body;
-                window.parent.postMessage(msg, "*");
-            }
-    
-            function selectOutput() {
-                var range = document.createRange();
-                range.selectNodeContents(output);
-                var sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-    
-            function color(data, i) {
-                var c = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2]; // ignore alpha
-                var alpha = data[i + 3];
-                if (!alpha || c == 0xffffff) c = 0;
-                return c;
-            }
+    <script>
+        var extId = window.location.hash.substr(1);
+        var hosted = false;
+        var idToType = {};
+        var usercode = {};
 
-            function renderUserCode() {
-                var ts = `// This file was autogenerated, do not edit...
+        function receiveMessage(ev) {
+            var msg = ev.data;
+            var action = idToType[msg.id];
+            if (action) {
+                console.debug('neoanim received ' + action);
+                switch (action) {
+                    case "extinit":
+                        hosted = true;
+                        console.log('host connection completed')
+                        sendRequest("extreadusercode");
+                        break;
+                    case "extreadusercode":
+                        usercode = msg.resp || {};
+                        break;
+                }
+                delete idToType[msg.id];
+            }
+        }
+
+        function mkRequest(action) {
+            var id = Math.random().toString();
+            idToType[id] = action;
+            return {
+                type: "pxtpkgext",
+                action: action,
+                extId: extId,
+                response: true,
+                id: id
+            }
+        }
+
+        function isIFrame() {
+            try {
+                return window && window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
+        }
+
+        function sendRequest(action, body) {
+            if (!isIFrame()) return;
+            var msg = mkRequest(action);
+            msg.body = body;
+            window.parent.postMessage(msg, "*");
+        }
+
+        function selectOutput() {
+            var range = document.createRange();
+            range.selectNodeContents(output);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function color(data, i) {
+            var c = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2]; // ignore alpha
+            var alpha = data[i + 3];
+            if (!alpha || c == 0xffffff) c = 0;
+            return c;
+        }
+
+        function renderUserCode() {
+            var ts = `// This file was autogenerated, do not edit...
 namespace light {
 `
-                var images = JSON.stringify(usercode.json);
-                Object.keys(usercode).forEach(function(fileName) {
-                    ts +=
-                        `
+            var images = JSON.stringify(usercode.json);
+            Object.keys(usercode).forEach(function (fileName) {
+                ts +=
+                    `
     /*
-    * Creates an animation created with neo-anim
+    * An awesome animation
     */
-    //% block
-    export function ${fileName}Animation(): NeoPixelAnimation {
-        return light.animationSheet(hex \`${usercode[fileName]}\`);
-    }
-`
-                })
+    //% fixedInstance block="${fileName.replace(/[_-]/g, ' ')}" jres=light.theaterChaseAnimation chase" blockIdentity="light._animationPicker"    
+    export const ${fileName.replace(/[_-]/g, '')}Animation = light.animationSheet(hex \`${usercode[fileName]}\`);
 
-                ts += `
-}`
-                return ts;
-            }
-    
-            function importImage(fileName, dataUri) {
-                fileName = fileName || "neo";
-                fileName = fileName.replace(/\..*$/, '').replace(/[^a-z0-9]/g, ''); 
-
-                var img = document.createElement('img'); // HTMLImageElement
-                img.onerror = function () {
-                    preview.innerText = "oops, can't load that PNG file"
-                }
-                img.onload = function () {
-                    var w = img.width;
-                    var h = img.height;
-    
-                    if (w > 2048) {
-                        preview.innerText = 'Too many columns, maximum 2048';
-                        return;
-                    }
-    
-                    if (h > 512) {
-                        preview.innerText = 'Too many rows, maximum 512';
-                        return;
-                    }
-    
-                    var cvs = document.createElement('canvas');
-                    var ctx = cvs.getContext("2d");
-                    ctx.clearRect(0, 0, w, h)
-                    ctx.drawImage(img, 0, 0, w, h, 0, 0, w, h);
-                    var imgData = ctx.getImageData(0, 0, w, h)
-    
-                    // quantize palette
-                    var data = imgData.data;
-                    var quant = {}; // TODO: use proper algo here
-                    for (var i = 0; i < data.length; i += 4) {
-                        var c = color(data, i);
-                        quant[c] = (quant[c] || 0) + 1;
-                    }
-                    var palette = Object.keys(quant);
-                    if (palette.length > 0xff) {
-                        preview.innerText = 'too many colors... save your png to a 8bit palette';
-                        return;
-                    }
-                    // reverse lookup
-                    for (var i = 0; i < palette.length; ++i)
-                        quant[palette[i]] = i;
-    
-                    // start building buffer
-                    var out = [0x2e, 0x0a, 0x21, 0x88, 0, 0];
-                    // magic number 0..3
-                    // palette
-                    out[4] = palette.length;
-                    var k = 6;
-                    for (var i = 0; i < palette.length; ++i) {
-                        out[k++] = (palette[i] >> 16) & 0xff;
-                        out[k++] = (palette[i] >> 8) & 0xff;
-                        out[k++] = (palette[i]) & 0xff;
-                    }
-                    // indexed colors
-                    for (var col = 0; col < w; ++col) {
-                        for (var row = 0; row < h; ++row) {
-                            var pix = (row * w + col) * 4;
-                            var c = color(data, pix);
-                            out[k++] = quant[c];
-                        }
-                    }
-    
-                    // generate TS
-                    if (hosted) {
-                        usercode[fileName] = out.map(function (c, i) { return ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('');
-                        var ts = renderUserCode();
-                        sendRequest("extwritecode", {
-                            code: ts,
-                            json: JSON.stringify(usercode, null, 2)
-                        })
-                        preview.innerText = 'Animation saved...';
-                    } else {
-                        var ts =
-                        `const animation = light.animationSheet(hex \`${out.map(function (c, i) { return ('0' + c.toString(16)).slice(-2) + (i % 80 == 79 ? '\n' : ''); }).join('')}\`, 50);
-    loops.forever(() => {
-        light.pixels.showAnimationFrame(animation);
-    })
     `
-                        preview.innerText = '';
-                        output.innerText = ts;
-                        outputext.style.display = 'block';
-                        selectOutput();
+            })
+
+            ts += `
+}`
+            return ts;
+        }
+
+        function toHex(c) {
+            return ('0' + c.toString(16)).slice(-2);
+        }
+
+        function saveUserCode(fileName, out) {            
+            usercode[fileName.toLowerCase()] = out;
+            var ts = renderUserCode();
+            sendRequest("extwritecode", {
+                code: ts,
+                json: JSON.stringify(usercode, null, 2)
+            })
+            preview.innerText = 'Animation saved...';
+            output.innerText = ts;
+            outputext.style.display = 'block';
+            selectOutput();
+        }
+
+        function importImage(fileName, dataUri) {
+            fileName = fileName || "neo";
+            fileName = fileName.replace(/\..*$/, '').replace(/[^a-z0-9]/g, '');
+
+            var img = document.createElement('img'); // HTMLImageElement
+            img.onerror = function () {
+                preview.innerText = "oops, can't load that image"
+            }
+            img.onload = function () {
+                var w = img.width;
+                var h = img.height;
+
+                if (w > 2048) {
+                    preview.innerText = 'Too many columns, maximum 2048';
+                    return;
+                }
+
+                if (h > 512) {
+                    preview.innerText = 'Too many rows, maximum 512';
+                    return;
+                }
+
+                var cvs = document.createElement('canvas');
+                var ctx = cvs.getContext("2d");
+                ctx.clearRect(0, 0, w, h)
+                ctx.drawImage(img, 0, 0, w, h, 0, 0, w, h);
+                var imgData = ctx.getImageData(0, 0, w, h)
+
+                // quantize palette
+                var data = imgData.data;
+                var quant = {}; // TODO: use proper algo here
+                for (var i = 0; i < data.length; i += 4) {
+                    var c = color(data, i);
+                    quant[c] = (quant[c] || 0) + 1;
+                }
+                var palette = Object.keys(quant);
+                if (palette.length > 0xff) {
+                    preview.innerText = 'too many colors... save your png to a 8bit palette';
+                    return;
+                }
+                // reverse lookup
+                for (var i = 0; i < palette.length; ++i)
+                    quant[palette[i]] = i;
+
+                // start building buffer
+                var out = [0x2e, 0x0a, 0x21, 0x88, 0, 0];
+                // magic number 0..3
+                // palette
+                out[4] = palette.length;
+                var k = 6;
+                for (var i = 0; i < palette.length; ++i) {
+                    out[k++] = (palette[i] >> 16) & 0xff;
+                    out[k++] = (palette[i] >> 8) & 0xff;
+                    out[k++] = (palette[i]) & 0xff;
+                }
+                // indexed colors
+                for (var col = 0; col < w; ++col) {
+                    for (var row = 0; row < h; ++row) {
+                        var pix = (row * w + col) * 4;
+                        var c = color(data, pix);
+                        out[k++] = quant[c];
                     }
                 }
-                img.src = dataUri;
+
+                saveUserCode(fileName, out.map(function (c, i) { return toHex(c) + (i % 80 == 79 ? '\n' : ''); }).join(''));
             }
-    
-            function importBitmap(f) {
-                outputext.style.display = 'none;'
-                preview.innerText = 'loading file...';
-    
+            img.src = dataUri;
+        }
+
+        function importExpressivePixels(msg) {
+            console.log(msg);
+            var fileName = msg.Command;
+            var frameCount = msg.FrameCount;
+            var frameRate = msg.FrameRate;
+            var frameHex = msg.FramesHex;
+            var paletteSize = msg.PaletteSize;
+            var paletteHex = msg.PaletteHex;
+
+            var out = "2e0a2188" + toHex(paletteSize) + paletteHex + frameHex;
+            saveUserCode(fileName, out);
+        }
+
+        function importBitmap(f) {
+            function importAsImage() {
                 var reader = new FileReader();
                 reader.onerror = function () {
                     preview.innerText = 'ooops, could not read file';
@@ -233,62 +236,82 @@ namespace light {
                 }
                 reader.readAsDataURL(f);
             }
-    
-            document.onreadystatechange = function (er) {
-                if (document.readyState != "complete") return;
-    
-                window.addEventListener("message", receiveMessage, false);                
-                document.body.addEventListener('paste', function (e) {
-                    if (e.clipboardData) {
-                        // has file?
-                        let files = e.clipboardData.files
-                        if (files && files.length > 0) {
-                            e.stopPropagation(); // Stops some browsers from redirecting.
-                            e.preventDefault();
-                            importBitmap(files[0]);
-                        }
-                        // has item?
-                        else if (e.clipboardData.items && e.clipboardData.items.length > 0) {
-                            let f = e.clipboardData.items[0].getAsFile()
-                            if (f) {
-                                e.stopPropagation(); // Stops some browsers from redirecting.
-                                e.preventDefault();
-                                importBitmap(f)
-                            }
-                        }
-                    }
-                })
-                document.body.addEventListener('dragover', function (e) {
-                    let types = e.dataTransfer.types;
-                    let found = false;
-                    for (let i = 0; i < types.length; ++i)
-                        if (types[i] == "Files")
-                            found = true;
-                    if (found) {
-                        if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
-                        e.dataTransfer.dropEffect = 'copy';  // See the section on the DataTransfer object.
-                        return false;
-                    }
-                    return true;
-                }, false);
-                document.body.addEventListener('drop', function (e) {
-                    var files = e.dataTransfer.files;
+
+            outputext.style.display = 'none;'
+            preview.innerText = 'loading file...';
+
+            // try load json...
+            var reader = new FileReader();
+            reader.onerror = function () {
+                preview.innerText = 'ooops, could not read file';
+            }
+            reader.onload = function (ev) {
+                try {
+                    var js = JSON.parse(reader.result);
+                    importExpressivePixels(js);
+                }
+                catch (e) {
+                    importAsImage();
+                }
+            }
+            reader.readAsText(f);
+        }
+
+        document.onreadystatechange = function (er) {
+            if (document.readyState != "complete") return;
+
+            window.addEventListener("message", receiveMessage, false);
+            document.body.addEventListener('paste', function (e) {
+                if (e.clipboardData) {
+                    // has file?
+                    let files = e.clipboardData.files
                     if (files && files.length > 0) {
                         e.stopPropagation(); // Stops some browsers from redirecting.
                         e.preventDefault();
                         importBitmap(files[0]);
                     }
+                    // has item?
+                    else if (e.clipboardData.items && e.clipboardData.items.length > 0) {
+                        let f = e.clipboardData.items[0].getAsFile()
+                        if (f) {
+                            e.stopPropagation(); // Stops some browsers from redirecting.
+                            e.preventDefault();
+                            importBitmap(f)
+                        }
+                    }
+                }
+            })
+            document.body.addEventListener('dragover', function (e) {
+                let types = e.dataTransfer.types;
+                let found = false;
+                for (let i = 0; i < types.length; ++i)
+                    if (types[i] == "Files")
+                        found = true;
+                if (found) {
+                    if (e.preventDefault) e.preventDefault(); // Necessary. Allows us to drop.
+                    e.dataTransfer.dropEffect = 'copy';  // See the section on the DataTransfer object.
                     return false;
-                }, false);
-                document.body.addEventListener('dragend', function (e) {
-                    return false;
-                }, false);
-    
-                output.onclick = function () { selectOutput(); }
+                }
+                return true;
+            }, false);
+            document.body.addEventListener('drop', function (e) {
+                var files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    e.stopPropagation(); // Stops some browsers from redirecting.
+                    e.preventDefault();
+                    importBitmap(files[0]);
+                }
+                return false;
+            }, false);
+            document.body.addEventListener('dragend', function (e) {
+                return false;
+            }, false);
 
-                sendRequest("extinit")
-            }
-        </script>
-    </body>
-    
-    </html>
+            output.onclick = function () { selectOutput(); }
+
+            sendRequest("extinit")
+        }
+    </script>
+</body>
+
+</html>
