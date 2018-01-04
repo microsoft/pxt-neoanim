@@ -114,8 +114,8 @@ namespace light {
     /*
     * An awesome animation
     */
-    //% fixedInstance block="${fileName} chase" blockIdentity="light._animationPicker"    
-    export const ${fileName}Animation = light.animationSheet(hex \`${usercode[fileName]}\`);
+    //% fixedInstance block="${fileName.replace(/[_-]/g, ' ')}" jres=light.theaterChaseAnimation chase" blockIdentity="light._animationPicker"    
+    export const ${fileName.replace(/[_-]/g, '')}Animation = light.animationSheet(hex \`${usercode[fileName]}\`);
 
     `
             })
@@ -130,7 +130,7 @@ namespace light {
         }
 
         function saveUserCode(fileName, out) {            
-            usercode[fileName] = out;
+            usercode[fileName.toLowerCase()] = out;
             var ts = renderUserCode();
             sendRequest("extwritecode", {
                 code: ts,
