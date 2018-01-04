@@ -1,6 +1,6 @@
 # neoanim
 
-A neopixel animation based on bitmaps
+A neopixel animation based on bitmaps [![Build Status](https://travis-ci.org/Microsoft/pxt-neoanim.svg?branch=master)](https://travis-ci.org/Microsoft/pxt-neoanim)
 
 # Animation Sheet
 
