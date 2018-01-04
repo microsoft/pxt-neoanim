@@ -39,7 +39,7 @@ The bitmap format should be specified as follows. All values are little endian.
 The following sample generates a buffer and uses it to create the animation.
 
 ```typescript
-const strip = light.pixels;
+const strip = light.createStrip();
 const nleds = strip.length();
 const ncolors = 3;
 const nframes = 10;
@@ -61,7 +61,7 @@ for (let i = 0; i < nleds; ++i) {
         frames[k++] = i + j % ncolors;
     }
 }
-let anim = light.animationSheet(sheet, 50);
+let anim = light.animationSheet(sheet);
 
 loops.forever(() => {
     strip.showAnimation(anim, 10000);
